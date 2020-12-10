@@ -1,0 +1,69 @@
+Upgrading ELK stack from 7.9 to 7.10 in centos 7
+
+step1
+#yum update
+
+The above command will update ELK stack from 7.9 to 7.10 automatically
+
+step2
+restart elk stack and check the service status
+
+[root@localhost ~]# systemctl status elasticsearch
+â— elasticsearch.service - Elasticsearch
+   Loaded: loaded (/usr/lib/systemd/system/elasticsearch.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Thu 2020-12-10 20:19:20 +0545; 10min ago
+     Docs: https://www.elastic.co
+  Process: 1501 ExecStart=/usr/share/elasticsearch/bin/systemd-entrypoint -p ${PID_DIR}/elasticsearch.pid --quiet (code=exited, status=1/FAILURE)
+ Main PID: 1501 (code=exited, status=1/FAILURE)
+
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: Error: A fatal exception has occurred. Program will exit.
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: at org.elasticsearch.tools.launchers.JvmErgonomics.fla...126)
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: at org.elasticsearch.tools.launchers.JvmErgonomics.fin...:88)
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: at org.elasticsearch.tools.launchers.JvmErgonomics.cho...:59)
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: at org.elasticsearch.tools.launchers.JvmOptionsParser....137)
+Dec 10 20:19:20 localhost.localdomain systemd-entrypoint[1501]: at org.elasticsearch.tools.launchers.JvmOptionsParser....:95)
+Dec 10 20:19:20 localhost.localdomain systemd[1]: elasticsearch.service: main process exited, code=exited, status=1/FAILURE
+Dec 10 20:19:20 localhost.localdomain systemd[1]: Failed to start Elasticsearch.
+Dec 10 20:19:20 localhost.localdomain systemd[1]: Unit elasticsearch.service entered failed state.
+Dec 10 20:19:20 localhost.localdomain systemd[1]: elasticsearch.service failed.
+Hint: Some lines were ellipsized, use -l to show in full.
+[root@localhost ~]# systemctl restart elasticsearch
+Job for elasticsearch.service failed because the control process exited with error code. See "systemctl status elasticsearch.service" and "journalctl -xe" for details.
+
+step3
+You can check the jdk version and install latest jdk
+
+[root@localhost ~]# jdk -version
+bash: jdk: command not found...
+[root@localhost ~]# java -version
+openjdk version "1.8.0_272"
+OpenJDK Runtime Environment (build 1.8.0_272-b10)
+OpenJDK 64-Bit Server VM (build 25.272-b10, mixed mode)
+
+If your elasticsearch does not go up then 
+
+
+go to 
+/etc/elasticsearch path
+
+open the file jvm.options
+
+comment the below line
+## GC configuration
+#-XX:+UseConcMarkSweepGC
+#-XX:CMSInitiatingOccupancyFraction=75
+#-XX:+UseCMSInitiatingOccupancyOnly
+
+Then restart the elasticsearch
+
+#systemctl restart elasticsearch
+
+It will start to run smoothly.
+
+
+
+
+
+
+
+
